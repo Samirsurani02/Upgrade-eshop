@@ -1,0 +1,61 @@
+import React, { useState } from 'react';
+
+function LoginForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const sendLoginRequest = (email, password) => {
+    fetch('http://localhost:3000/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle login response
+        console.log(data);
+        const accessToken = data.accessToken;
+        // Store the access token in state or local storage
+        localStorage.setItem('accessToken', accessToken);
+        // Redirect or perform any other necessary actions
+      })
+      .catch((error) => {
+        // Handle error
+        console.error('Error:', error);
+      });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // Send login request
+    sendLoginRequest(email, password);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Email:
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </label>
+      <label>
+        Password:
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </label>
+      <button type="submit">Login</button>
+    </form>
+  );
+}
+
+export default LoginForm;
